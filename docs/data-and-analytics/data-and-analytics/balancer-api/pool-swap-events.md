@@ -10,7 +10,11 @@ As they have different event types, we also use the expanded `GqlPoolSwapEventCo
 ```graphql
 {
   poolEvents(
-    where: {typeIn: [SWAP], chainIn: [MAINNET], poolIdIn: ["0xf08d4dea369c456d26a3168ff0024b904f2d8b91", "0x3de27efa2f1aa663ae5d458857e731c129069f29000200000000000000000588"]}
+    where: {
+      typeIn: [SWAP], 
+      chainIn: [MAINNET], 
+      poolIdIn: ["0xf08d4dea369c456d26a3168ff0024b904f2d8b91", "0x3de27efa2f1aa663ae5d458857e731c129069f29000200000000000000000588"]
+      },
     first: 1000
   ) {
     type

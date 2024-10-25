@@ -9,18 +9,19 @@ Wallet balances mean that the user holds the BPT in his wallet. Staked balances 
 
 ```graphql
 {
-poolGetPools(where:{chainIn:[MAINNET], userAddress:"0x..."}){
-  address
-  userBalance{
-    stakedBalances{
-      balance
-      balanceUsd
-      stakingType
+  poolGetPools(where:{chainIn:[MAINNET], userAddress:"0x..."}){
+    address
+    userBalance{
+      stakedBalances{
+        balance
+        balanceUsd
+        stakingType
+      }
+      walletBalance
+      walletBalanceUsd
+      totalBalance
+      totalBalanceUsd
     }
-    walletBalance
-    walletBalanceUsd
-    totalBalance
-    totalBalanceUsd
   }
-}}
+}
 ```
