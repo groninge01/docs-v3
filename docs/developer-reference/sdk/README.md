@@ -38,6 +38,6 @@ npm install @balancer/sdk
 
 ## Guides and Examples
 
-For detailed guides explaining how to use the SDK for common actions please see [Developer Guides](../../integration-guides/guides/add-liquidity-to-pool.md).
+For detailed guides explaining how to use the SDK for common actions please see [Developer Guides](../../integration-guides/add-and-remove-liquidity/add-liquidity-to-pool.md).
 
 There are also detailed examples that run against a local fork in the [SDK repo](https://github.com/balancer/b-sdk/tree/main/examples).
