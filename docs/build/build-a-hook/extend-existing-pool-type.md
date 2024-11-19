@@ -10,7 +10,7 @@ _This section is for developers looking to extend an existing pool type with cus
 Hooks introduce a new framework for extending the functionality of existing pool types at key points throughout their lifecycle. By enabling actions during pool operations and facilitating dynamic swap fee computation, hooks offer unprecedented control over pool behavior. This innovative concept empowers developers to craft tailored pool behaviors, catering to specific use cases and enhancing operations with greater flexibility and control.
 
 ::: info
-Before you start with this walkthrough, consider reading through the [technical section on hooks](/concepts/core-concepts/hooks.html#hook-contracts) and take a look at the [Hooks API](/developer-reference/contracts/hooks-api.html).
+Before you start with this walkthrough, consider reading through the [technical section on hooks](/docs/concepts/core-concepts/hooks.md#hook-contracts) and take a look at the [Hooks API](/docs/developer-reference/contracts/hooks-api.html).
 :::
 
 ## Creating a Dynamic Swap Fee Hook Contract
@@ -125,7 +125,7 @@ function onRegister(
 
 The `onRegister` function enables developers to implement custom validation logic to ensure the registration is valid. When a new pool is registered, a hook address can be provided to "link" the pool and the hook. At this stage, the `onRegister` function is invoked by the Vault, and it must return true for the registration to be successful. If the validation fails, the function should return false, preventing the registration from being completed.
 
-In this example we validate that the `factory` param forwarded from the Vault matches the `allowedFactory` set during the hook deployment, and that the pool was deployed by that factory. If successful, it emits an event for tracking by offchain processes.
+In this example we validate that the `factory` param forwarded from the Vault matches the `allowedFactory` set during the hook deployment, and that the pool was deployed by that factory. If successful, it emits an event for tracking by off-chain processes.
 
 ### Implementing the Swap Fee Logic
 
@@ -154,5 +154,5 @@ function onComputeDynamicSwapFeePercentage(
 
 Now we can implement the logic in the `onComputeDynamicSwapFeePercentage` function, which the Vault calls to retrieve the swap fee value. In our example, any veBal holder enjoys a 50% swap fee discount, instead of the default static swap fee. However, there are some nuances to consider in this implementation.
 
-To obtain the user's veBAL balance, we need the sender's address, which we can retrieve by calling `getSender()` on the router. This relies on the router returning the correct address, so it's crucial to ensure the router is "trusted" (any contract can act as a [Router](/concepts/router/overview.html#routers)). In our example we passed a trusted `_router` address, which is saved during the hook deployment.
+To obtain the user's veBAL balance, we need the sender's address, which we can retrieve by calling `getSender()` on the router. This relies on the router returning the correct address, so it's crucial to ensure the router is "trusted" (any contract can act as a [Router](/docs/concepts/router/overview.html#routers)). In our example we passed a trusted `_router` address, which is saved during the hook deployment.
 
