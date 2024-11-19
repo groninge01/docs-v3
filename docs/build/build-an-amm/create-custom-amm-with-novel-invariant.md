@@ -11,7 +11,7 @@ AMMs built on Balancer inherit the security of the Balancer vault, and benefit f
 Balancer v3 was re-built from the ground up with developer experience as a core focus.
 Development teams can now focus on their product innovation without having to build an entire AMM.
 
-_This section is for developers looking to build a new custom pool type with a novel invariant. If you are looking to extend an existing pool type with hooks, start [here](/build-a-custom-amm/build-an-amm/extend-existing-pool-type-using-hooks.html)._
+_This section is for developers looking to build a new custom pool type with a novel invariant. If you are looking to extend an existing pool type with hooks, start [here](/build/build-an-amm/extend-existing-pool-type-using-hooks.html)._
 
 ## Build your custom AMM
 
@@ -443,12 +443,12 @@ These settings get passed into the [pool registration](/docs/developer-reference
 
 ## Testing your pool
 
-Depending on the combination of liquidity operations you allow for your pool you need to ensure the correct amount of BPT get's minted whenever a user adds/removes liquidity unbalanced (which calls into `computeInvariant`) and proportional adds/removes (which does not call into the pool and solely relies on [BasePoolMath.sol](https://github.com/balancer/balancer-v3-monorepo/blob/4864599800adc88d6a53f0a5b71c8352eac2f3a1/pkg/solidity-utils/contracts/math/BasePoolMath.sol#L7)). Let's say your pool has reserves of [100, 100] and an `addLiquidityProportional([50,50])` gets the user 100 BPT in return, if the user were to `addLiquidityUnbalanced([50,50])` you must ensure that the amount of BPT that gets minted is the same as in the `addLiquidityProportional([50,50])` operation. Consider also reading through [liquidity invariant approximation](/docs/concepts/vault/liquidity-invariant-approximation.md) to get more context on various combination of pool operations.
+Depending on the combination of liquidity operations you allow for your pool you need to ensure the correct amount of BPT get's minted whenever a user adds/removes liquidity unbalanced (which calls into `computeInvariant`) and proportional adds/removes (which does not call into the pool and solely relies on [BasePoolMath.sol](https://github.com/balancer/balancer-v3-monorepo/blob/4864599800adc88d6a53f0a5b71c8352eac2f3a1/pkg/solidity-utils/contracts/math/BasePoolMath.sol#L7)). Let's say your pool has reserves of [100, 100] and an `addLiquidityProportional([50,50])` gets the user 100 BPT in return, if the user were to `addLiquidityUnbalanced([50,50])` you must ensure that the amount of BPT that gets minted is the same as in the `addLiquidityProportional([50,50])` operation. Consider also reading through [liquidity invariant approximation](/concepts/vault/liquidity-invariant-approximation.md) (/docs/concepts/vault/liquidity-invariant-approximation.md) to get more context on various combination of pool operations.
 
 
 ## Deploying your pool
 
-See the guide to [Deploy a Custom AMM Using a Factory](/docs/build-a-custom-amm/build-an-amm/deploy-custom-amm-using-factory.html).
+See the guide to [Deploy a Custom AMM Using a Factory](/build/build-an-amm/deploy-custom-amm-using-factory.html).
 
 
 <!---
