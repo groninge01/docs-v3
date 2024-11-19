@@ -5,7 +5,7 @@ title: Hooks
 # Hooks
 
 :::info Get Started
-To get started building your own hook check out the [guide](../../build/build-an-amm/extend-existing-pool-type-using-hooks.md).
+To get started building your own hook check out the [guide](/build/build-a-hook/extend-existing-pool-type.md).
 :::
 
 Hooks introduce a framework to extend existing pool types at various key points throughout the pool’s lifecycle. Hooks can execute actions during pool operation and also compute a dynamic swap fee. Potential applications for hooks include:
