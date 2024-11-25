@@ -9,7 +9,7 @@ This guide illustrates the process of executing swaps through the router once sw
 
 _To use the Balancer Smart Order Router to find efficient swap paths for a pair see [this guide](./swaps-with-sor-sdk.md)._
 
-_This guide is for Swapping on Balancer v3. If you're looking to Swap using Balancer v2, start [here](https://docs.balancer.fi/reference/swaps/batch-swaps.html)._
+_This guide is for Swapping on Balancer v3. The sdk supports swapping on v3 and Balancer v2._
 
 ## Core Concepts
 

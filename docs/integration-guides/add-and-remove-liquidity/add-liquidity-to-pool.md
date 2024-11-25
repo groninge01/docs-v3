@@ -7,7 +7,7 @@ title: Add liquidity to a pool
 
 This guide demonstrates how to add liquidity to a pool. We will use the `addLiquidityUnbalanced` method, since it allows exact amounts of any pool token to be added to a pool, avoiding unnecessary dust in the user's wallet. See the [Router API](/developer-reference/contracts/router-api.html) for other supported add methods.
 
-_This guide is for adding liquidity to Balancer v3. If you're looking to add liquidity to a Balancer v2 pool, start [here](https://docs.balancer.fi/guides/builders/join-pool.html)._
+_This guide is for adding liquidity to Balancer v3 with the [b-sdk](https://github.com/balancer/b-sdk). This sdk supports adding liquidity to Balancer v3, Balancer v2 as well as Cow-AMMs._
 
 ## Core Concepts
 
