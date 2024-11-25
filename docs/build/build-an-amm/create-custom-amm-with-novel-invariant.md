@@ -11,7 +11,7 @@ AMMs built on Balancer inherit the security of the Balancer vault, and benefit f
 Balancer v3 was re-built from the ground up with developer experience as a core focus.
 Development teams can now focus on their product innovation without having to build an entire AMM.
 
-_This section is for developers looking to build a new custom pool type with a novel invariant. If you are looking to extend an existing pool type with hooks, start [here](/build/build-an-amm/extend-existing-pool-type-using-hooks.html)._
+_This section is for developers looking to build a new custom pool type with a novel invariant. If you are looking to extend an existing pool type with hooks, start [here](/build/build-a-hook/extend-existing-pool-type.html)._
 
 ## Build your custom AMM
 
