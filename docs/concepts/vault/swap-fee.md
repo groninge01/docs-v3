@@ -3,7 +3,7 @@ title: Swap Fee
 order: 8
 ---
 # Swap fee
-A swap fee is charged for each swap, as well as on the non-proportional amounts in add/remove liquidity operations. When a pool is registered, the initial swap fee is passed as a parameter and stored as part of [the pool's configuration](https://github.com/balancer/balancer-v3-monorepo/blob/main/pkg/interfaces/contracts/vault/VaultTypes.sol#L28-L39). The swap fee is always charged on the calculated amount (i.e., on `amountOut` for EXACT_IN, and `amountIn` for EXACT_OUT).
+A swap fee is charged for each swap, as well as on the non-proportional amounts in add/remove liquidity operations. When a pool is registered, the initial swap fee is passed as a parameter and stored as part of [the pool's configuration](https://github.com/balancer/balancer-v3-monorepo/blob/main/pkg/interfaces/contracts/vault/VaultTypes.sol#L28-L39). The swap fee is always charged on the amount in (i.e., on the given amount for EXACT_IN, and the calculated amount for EXACT_OUT).
 
 :::info
 Let's imagine a liquidity pool that maintains an equal balance of DAI and USDC, known as a 50/50 pool. A user decides to add liquidity to this pool, but does so in an unbalanced manner: they contribute 15 DAI and 10 USDC.
@@ -33,10 +33,10 @@ Different types of pools can have varying minimum and maximum swap fees. These v
 
 This means that all new pool types (assuming they implement `IBasePool`) will need to think about what the swap fee range should be, according to the pool type's math and other constraints, then override and set the values accordingly. (Note that invariant limits must also be defined for new pool types, by implementing `IUnbalancedLiquidityInvariantRatioBounds`.)
 
-## Dynamic swap fee
-Liquidity pools can be set up to use dynamic swap fees. When registering a pool with a dynamic swap fee, `shouldCallComputeDynamicSwapFee` should be true in the HooksConfig.
+## Dynamic swap fee (using Hooks)
+Using Hooks a pool can be set up to use dynamic swap fees. When registering a pool with a dynamic swap fee, `shouldCallComputeDynamicSwapFee` should be true in the HooksConfig.
 
-Instead of getting the swap fee from the [pool's configuration](https://github.com/balancer/balancer-v3-monorepo/blob/main/pkg/interfaces/contracts/vault/VaultTypes.sol#L28-L39), the Vault uses the [`onComputeDynamicSwapFeePercentage()`](/developer-reference/contracts/hooks-api.html#oncomputedynamicswapfeepercentage) hook to fetch the dynamic swap fee from the pool. This function returns the swap fee percentage to be used for the current swap. It's important to note that even when a pool is set to use dynamic swap fees, it still maintains a static swap fee, which is not directly used (though it is sent to the dynamic fee hook for reference).
+Instead of getting the swap fee from the [pool's configuration](https://github.com/balancer/balancer-v3-monorepo/blob/main/pkg/interfaces/contracts/vault/VaultTypes.sol#L28-L39), the Vault uses the [`onComputeDynamicSwapFeePercentage()`](/developer-reference/contracts/hooks-api.html#oncomputedynamicswapfeepercentage) hook to fetch the dynamic swap fee. This function returns the swap fee percentage to be used for the current swap. It's important to note that even when a pool is set to use dynamic swap fees, it still maintains a static swap fee, which is not directly used (though it is sent to the dynamic fee hook for reference).
 
 :::info
 The capability to compute dynamic swap fee percentages opens up new and creative ways to calculate fees. For example, the fees can be adjusted depending on the swap direction, or configured to maintain a token's pegged value.
