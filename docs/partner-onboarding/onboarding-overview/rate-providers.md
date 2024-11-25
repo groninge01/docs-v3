@@ -5,12 +5,11 @@ order: 1
 
 # Rate Providers
 
-A rate provider is a contract that provides a rate relative to the underlying asset. For example, the rate of wstETH to stETH. Examples can be found in [this repo](https://github.com/balancer/code-review/tree/main/rate-providers).
+Rate providers are contracts that provide an exchange rate between two assets. For example, the rate of stETH to wstETH. If a pool is created with tokens that use unreviewed rate providers, it will not show on [balancer.fi](https://balancer.fi/pools)
 
 ::: tip
 - Technical information on rate providers can be found [here](../../concepts/core-concepts/rate-providers.md)
 - To submit your own rate provider contract for review, create an issue [here](https://github.com/balancer/code-review/issues/new?assignees=mkflow27&labels=request&projects=&template=review-request.yml)
-- If a pool is created with tokens that use unreviewed rate providers, it will not show on [balancer.fi](https://balancer.fi/pools)
 :::
 
 ## What are the requirements for a rate provider contract?
@@ -32,6 +31,6 @@ The primary use-case of a rate provider is the deployment of liquidity in a comp
 
 
 ## Resources
-- [Rate provider review](https://github.com/balancer/code-review/issues/new?assignees=mkflow27&labels=request&projects=&template=review-request.yml)
-- [Rate provider registry](https://github.com/balancer/code-review/tree/main/rate-providers)
 - [IRateProvider interface](https://github.com/balancer/balancer-v3-monorepo/blob/main/pkg/interfaces/contracts/solidity-utils/helpers/IRateProvider.sol)
+- [Request a rate provider review](https://github.com/balancer/code-review/issues/new?assignees=mkflow27&labels=request&projects=&template=review-request.yml)
+- [Registry of completed rate provider reviews](https://github.com/balancer/code-review/tree/main/rate-providers)
