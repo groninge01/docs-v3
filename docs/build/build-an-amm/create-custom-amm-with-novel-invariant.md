@@ -11,7 +11,7 @@ AMMs built on Balancer inherit the security of the Balancer vault, and benefit f
 Balancer v3 was re-built from the ground up with developer experience as a core focus.
 Development teams can now focus on their product innovation without having to build an entire AMM.
 
-_This section is for developers looking to build a new custom pool type with a novel invariant. If you are looking to extend an existing pool type with hooks, start [here](/build/build-an-amm/extend-existing-pool-type-using-hooks.html)._
+_This section is for developers looking to build a new custom pool type with a novel invariant. If you are looking to extend an existing pool type with hooks, start [here](/build/build-a-hook/extend-existing-pool-type.html)._
 
 ## Build your custom AMM
 
@@ -19,7 +19,7 @@ At a high level, creating a custom AMM on Balancer protocol involves the impleme
 To expedite the development process, Balancer provides two contracts to inherit from:
 
 - [IBasePool.sol](https://github.com/balancer/balancer-v3-monorepo/blob/main/pkg/interfaces/contracts/vault/IBasePool.sol) - This interface defines the required functions that every Balancer pool must implement
-- [BalancerPoolToken.sol](https://github.com/balancer/balancer-v3-monorepo/blob/main/pkg/vault/contracts/BalancerPoolToken.sol) - This contract implements the [ERC20MultiToken](/docs/concepts/vault/erc20-multi-token.html) standard that enables your pool contract to be ERC20 compliant while delegating BPT accounting to the vault. For more information, refer to [BalancerPoolToken](/docs/concepts/core-concepts/balancer-pool-tokens.html).
+- [BalancerPoolToken.sol](https://github.com/balancer/balancer-v3-monorepo/blob/main/pkg/vault/contracts/BalancerPoolToken.sol) - This contract implements the [ERC20MultiToken](/concepts/vault/erc20-multi-token.html) standard that enables your pool contract to be ERC20 compliant while delegating BPT accounting to the vault. For more information, refer to [BalancerPoolToken](/concepts/core-concepts/balancer-pool-tokens.html).
 
 Both `IBasePool` and `BalancerPoolToken` are used across all core Balancer pools, even those implemented by Balancer Labs (ie: [WeightedPool](https://github.com/balancer/balancer-v3-monorepo/blob/main/pkg/pool-weighted/contracts/WeightedPool.sol)).
 
@@ -216,15 +216,15 @@ contract ConstantSumPool is IBasePool, BalancerPoolToken {
 ::: info What does Scaled18 mean?
 Internally, Balancer protocol scales all tokens to 18 decimals to minimize the potential for errors that can occur when
 comparing tokens with different decimals numbers (ie: WETH/USDC). `Scaled18` is a suffix used to signify values has already been scaled.
-**By default, ALL values provided to the pool will always be `Scaled18`.** Refer to [Decimal scaling](/docs/concepts/vault/token-scaling.html#pool-registration) for more information.
+**By default, ALL values provided to the pool will always be `Scaled18`.** Refer to [Decimal scaling](/concepts/vault/token-scaling.html#pool-registration) for more information.
 :::
 
 ::: info What does Live refer to in balancesLiveScaled18?
-The keyword `Live` denotes balances that have been scaled by their respective `IRateProvider` and have any pending yield fees removed. Refer to [Live Balances](/docs/concepts/vault/token-scaling.html#live-balances) for more information.
+The keyword `Live` denotes balances that have been scaled by their respective `IRateProvider` and have any pending yield fees removed. Refer to [Live Balances](/concepts/vault/token-scaling.html#live-balances) for more information.
 :::
 
 ::: info How are add and remove liquidity operations implemented?
-Balancer protocol leverages a novel approximation, termed the [Liquidity invariant approximation](/docs/concepts/vault/liquidity-invariant-approximation.html), to provide a generalized solution for liquidity operations.
+Balancer protocol leverages a novel approximation, termed the [Liquidity invariant approximation](/concepts/vault/liquidity-invariant-approximation.html), to provide a generalized solution for liquidity operations.
 By implementing `computeInvariant` and `computeBalance`, your custom AMM will immediately support all Balancer liquidity operations: `unbalanced`, `proportional` and `singleAsset`.
 :::
 
@@ -386,16 +386,16 @@ No, swap fees are managed entirely by the Balancer vault. For an `EXACT_OUT` swa
 Balancer supports two types of swap fees:
 
 - **Static swap fee**: Defined on `vault.registerPool()` and managed via calls to `vault.setStaticSwapFeePercentage()`. For more information, see [Swap fee](/concepts/vault/swap-fee.html).
-- **Dynamic swap fee**: Managed by a **Hooks** contract. Whether a swap with a pool uses the dynamic swap fee is determined at pool registration. A Hook sets the flag indicating support for dynamic fees on `vault.registerPool()`. For more information, see [Dynamic swap fees](/docs/concepts/vault/swap-fee.html#dynamic-swap-fee).
+- **Dynamic swap fee**: Managed by a **Hooks** contract. Whether a swap with a pool uses the dynamic swap fee is determined at pool registration. A Hook sets the flag indicating support for dynamic fees on `vault.registerPool()`. For more information, see [Dynamic swap fees](/concepts/vault/swap-fee.html#dynamic-swap-fee).
 
 ## Hooks
-Hooks as standalone contracts are not part of a custom pool's implementation. However they can be combined with custom pools. For a detailed understanding, see [Hooks](/docs/concepts/core-concepts/hooks.html).
+Hooks as standalone contracts are not part of a custom pool's implementation. However they can be combined with custom pools. For a detailed understanding, see [Hooks](/concepts/core-concepts/hooks.html).
 
 ### Vault reentrancy
 Hooks allow a pool to reenter the vault within the context of a pool operation. While `onSwap`, `computeInvariant` and `computeBalance` must be executed within a reentrancy guard, the vault is architected such that hooks operate outside of this requirement.
 
 ## Add / Remove liquidity 
-The implementation of `computeInvariant` and `computeBalance` allows a pool to support ALL [Add/Remove liquidity types](/docs/concepts/vault/add-remove-liquidity-types.html).
+The implementation of `computeInvariant` and `computeBalance` allows a pool to support ALL [Add/Remove liquidity types](/concepts/vault/add-remove-liquidity-types.html).
 For instances where your custom AMM has additional requirements for add/remove liquidity operations, Balancer provides support for `AddLiquidityKind.CUSTOM` and `RemoveLiquidityKind.CUSTOM`.
 An example custom liquidity operation can be found in [Cron Finance's](https://docs.cronfi.com/twamm/) TWAMM implementation on Balancer v2, specifically when the pool [registers long term orders](https://github.com/Cron-Finance/v1-twamm/blob/main/contracts/twault/CronV1Pool.sol#L438).
 
@@ -438,12 +438,12 @@ struct LiquidityManagement {
     bool enableDonation;
 }
 ```
-These settings get passed into the [pool registration](/docs/developer-reference/contracts/vault-api.html#registerpool) flow.
+These settings get passed into the [pool registration](/developer-reference/contracts/vault-api.html#registerpool) flow.
 
 
 ## Testing your pool
 
-Depending on the combination of liquidity operations you allow for your pool you need to ensure the correct amount of BPT get's minted whenever a user adds/removes liquidity unbalanced (which calls into `computeInvariant`) and proportional adds/removes (which does not call into the pool and solely relies on [BasePoolMath.sol](https://github.com/balancer/balancer-v3-monorepo/blob/4864599800adc88d6a53f0a5b71c8352eac2f3a1/pkg/solidity-utils/contracts/math/BasePoolMath.sol#L7)). Let's say your pool has reserves of [100, 100] and an `addLiquidityProportional([50,50])` gets the user 100 BPT in return, if the user were to `addLiquidityUnbalanced([50,50])` you must ensure that the amount of BPT that gets minted is the same as in the `addLiquidityProportional([50,50])` operation. Consider also reading through [liquidity invariant approximation](/concepts/vault/liquidity-invariant-approximation.md) (/docs/concepts/vault/liquidity-invariant-approximation.md) to get more context on various combination of pool operations.
+Depending on the combination of liquidity operations you allow for your pool you need to ensure the correct amount of BPT get's minted whenever a user adds/removes liquidity unbalanced (which calls into `computeInvariant`) and proportional adds/removes (which does not call into the pool and solely relies on [BasePoolMath.sol](https://github.com/balancer/balancer-v3-monorepo/blob/4864599800adc88d6a53f0a5b71c8352eac2f3a1/pkg/solidity-utils/contracts/math/BasePoolMath.sol#L7)). Let's say your pool has reserves of [100, 100] and an `addLiquidityProportional([50,50])` gets the user 100 BPT in return, if the user were to `addLiquidityUnbalanced([50,50])` you must ensure that the amount of BPT that gets minted is the same as in the `addLiquidityProportional([50,50])` operation. Consider also reading through [liquidity invariant approximation](/concepts/vault/liquidity-invariant-approximation.md) to get more context on various combination of pool operations.
 
 
 ## Deploying your pool
