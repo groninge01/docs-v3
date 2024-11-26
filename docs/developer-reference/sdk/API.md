@@ -83,15 +83,20 @@ AddLiquidityBuildCallOutput;
 
 Builds the addLiquidity transaction using user defined slippage and Permit2 signature for token approval.
 
+:::info Permit2 Signature
+Check out [Permit2 Helper section](#permit2-helper) on how to generate a Permit2 signature.
+:::
+
 ```typescript
-buildCall(input: AddLiquidityBuildCallInput): AddLiquidityBuildCallOutput
+buildCallWithPermit2(input: AddLiquidityBuildCallInput, permit2: Permit2): AddLiquidityBuildCallOutput
 ```
 
 **Parameters**
 
-| Name  | Type                                                                                                             | Description                                                           |
-| ----- | ---------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| input | [AddLiquidityBuildCallInput](https://github.com/balancer/b-sdk/tree/main/src/entities/addLiquidity/types.ts#L63) | Parameters required to build the call including user defined slippage |
+| Name    | Type                                                                                                             | Description                                                           |
+| ------- | ---------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| input   | [AddLiquidityBuildCallInput](https://github.com/balancer/b-sdk/tree/main/src/entities/addLiquidity/types.ts#L63) | Parameters required to build the call including user defined slippage |
+| permit2 | [Permit2](https://github.com/balancer/b-sdk/tree/main/src/entities/permit2Helper/index.ts#L35)                   | Permit2 object with metadata and encoded signature                    |
 
 **Returns**
 
@@ -206,6 +211,38 @@ RemoveLiquidityBuildCallOutput;
 
 ---
 
+### buildCallWithPermit
+
+Builds the removeLiquidity transaction using user defined slippage and Permit signature for token approval.
+
+:::info Permit Signature
+Check out [Permit Helper section](#permit-helper) on how to generate a Permit signature.
+:::
+
+```typescript
+buildCallWithPermit(
+  input: RemoveLiquidityBuildCallInput,
+  permit: Permit,
+): RemoveLiquidityBuildCallOutput
+```
+
+**Parameters**
+
+| Name   | Type                                                                                                                   | Description                                       |
+| ------ | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| input  | [RemoveLiquidityBuildCallInput](https://github.com/balancer/b-sdk/tree/main/src/entities/removeLiquidity/types.ts#L79) | Input with user defined slippage                  |
+| permit | [Permit](https://github.com/balancer/b-sdk/tree/main/src/entities/permitHelper/index.ts#L30)                           | Permit object with metadata and encoded signature |
+
+**Returns**
+
+```typescript
+RemoveLiquidityBuildCallOutput;
+```
+
+[RemoveLiquidityBuildCallOutput](https://github.com/balancer/b-sdk/tree/main/src/entities/removeLiquidity/types.ts#L83) - Encoded call data for addLiquidity that user can submit.
+
+---
+
 ## Swap
 
 This class provides functionality to:
@@ -285,10 +322,39 @@ buildCall(
 SwapBuildOutputExactIn | SwapBuildOutputExactOut;
 ```
 
-[SwapBuildOutputExactIn](https://github.com/balancer/b-sdk/tree/main/src/entities/swap/types.ts#L31)
-[SwapBuildOutputExactOut](https://github.com/balancer/b-sdk/tree/main/src/entities/swap/types.ts#L35)
+[SwapBuildOutputExactIn](https://github.com/balancer/b-sdk/tree/main/src/entities/swap/types.ts#L31) | [SwapBuildOutputExactOut](https://github.com/balancer/b-sdk/tree/main/src/entities/swap/types.ts#L35) - Encoded call data for swap that user can submit. Includes `minAmountOut` or `maxAmountIn` depending on swap kind.
 
-[RemoveLiquidityBuildCallOutput](https://github.com/balancer/b-sdk/tree/main/src/entities/removeLiquidity/types.ts#L83) - Encoded call data for swap that user can submit. Includes `minAmountOut` or `maxAmountIn` depending on swap kind.
+---
+
+### buildCallWithPermit2
+
+Builds the swap transaction using user defined slippage and Permit2 signature for token approval.
+
+:::info Permit2 Signature
+Check out [Permit2 Helper section](#permit2-helper) on how to generate a Permit2 signature.
+:::
+
+```typescript
+buildCallWithPermit2(
+  input: SwapBuildCallInput,
+  permit2: Permit2,
+): SwapBuildOutputExactIn | SwapBuildOutputExactOut
+```
+
+**Parameters**
+
+| Name    | Type                                                                                             | Description                                        |
+| ------- | ------------------------------------------------------------------------------------------------ | -------------------------------------------------- |
+| input   | [SwapBuildCallInput](https://github.com/balancer/b-sdk/tree/main/src/entities/swap/types.ts#L21) | Input with user defined slippage                   |
+| permit2 | [Permit2](https://github.com/balancer/b-sdk/tree/main/src/entities/permit2Helper/index.ts#L35)   | Permit2 object with metadata and encoded signature |
+
+**Returns**
+
+```typescript
+SwapBuildOutputExactIn | SwapBuildOutputExactOut;
+```
+
+[SwapBuildOutputExactIn](https://github.com/balancer/b-sdk/tree/main/src/entities/swap/types.ts#L31) | [SwapBuildOutputExactOut](https://github.com/balancer/b-sdk/tree/main/src/entities/swap/types.ts#L35) - Encoded call data for swap that user can submit. Includes `minAmountOut` or `maxAmountIn` depending on swap kind.
 
 ---
 
@@ -718,15 +784,13 @@ Amounts proportional to the reference amount.
 
 Balancer v3 handles token approval through Pemit2 and this helper facilitates Permit2 signature generation.
 
-Each operation (e.g. addLiquidity, swap, ...) has its own method that leverages the same input type of the operation itself in order to simplify signature generation.
+Each operation (i.e. `addLiquidity`, `addLiquidityNested`, `addLiquidityBoosted` and `swap`) has its own method that leverages the same input type of the operation itself in order to simplify signature generation.
 
 **Example**
 
 See [addLiquidityWithPermit2Signature example](https://github.com/balancer/b-sdk/tree/main/examples/addLiquidity/addLiquidityWithPermit2Signature.ts).
 
 **Function**
-
-Helper function to create a Permit2 signature for an addLiquidity operation:
 
 ```typescript
 static async signAddLiquidityApproval(
@@ -763,15 +827,13 @@ Promise<Permit2>;
 
 Balancer v3 conforms with EIP-2612 and this helper facilitates Permit signature generation.
 
-Each operation (e.g. removeLiquidity, removeLiquidityNested and removeLiquidityBoosted) has its own method that leverages the same input type of the operation itself in order to simplify signature generation.
+Each operation (i.e. `removeLiquidity`, `removeLiquidityNested` and `removeLiquidityBoosted`) has its own method that leverages the same input type of the operation itself in order to simplify signature generation.
 
 **Example**
 
 See [removeLiquidityWithPermitSignature example](https://github.com/balancer/b-sdk/tree/main/examples/removeLiquidity/removeLiquidityWithPermitSignature.ts).
 
 **Function**
-
-Helper function to create a Permit signature for a removeLiquidity operation:
 
 ```typescript
 static signRemoveLiquidityApproval = async (
