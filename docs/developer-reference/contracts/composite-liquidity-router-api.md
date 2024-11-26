@@ -108,6 +108,7 @@ function addLiquidityUnbalancedNestedPool(
     address[] memory tokensIn,
     uint256[] memory exactAmountsIn,
     uint256 minBptAmountOut,
+    bool wethIsEth,
     bytes memory userData
 ) external returns (uint256 bptAmountOut);
 ```
@@ -121,6 +122,7 @@ Adds liquidity unbalanced to a nested pool. A nested pool is one in which one or
 | tokensIn   | uint256[] memory | Input token addresses, sorted by user preference. `tokensIn` array must have all tokens from child pools and all tokens that are not BPTs from the nested pool (parent pool). |
 | exactAmountsIn   | uint256[] memory  | Amount of each underlying token in, sorted according to tokensIn array |
 | minBptAmountOut  | uint256                               | Expected minimum amount of parent pool tokens to receive    |
+| wethIsEth  | bool                               | If true, incoming ETH will be wrapped to WETH and outgoing WETH will be unwrapped to ETH     |
 | userData   | bytes calldata                     | Additional (optional) data required for the operation                                             |
 
 **Returns:**
@@ -137,6 +139,7 @@ function removeLiquidityProportionalNestedPool(
     uint256 exactBptAmountIn,
     address[] memory tokensOut,
     uint256[] memory minAmountsOut,
+    bool wethIsEth,
     bytes memory userData
 ) external returns (uint256[] memory amountsOut);
 ```
@@ -150,6 +153,7 @@ Adds liquidity unbalanced to a nested pool. A nested pool is one in which one or
 | exactBptAmountIn  | uint256                               | Exact amount of `parentPool` tokens provided    |
 | tokensOut   | uint256[] memory | Output token addresses, sorted by user preference. `tokensOut` array must have all tokens from child pools and all tokens that are not BPTs from the nested pool (parent pool). If not all tokens are informed, balances are not settled and the operation reverts. Tokens that repeat must be informed only once. |
 | minAmountsOut   | uint256[] memory  | Amount of each underlying token in, sorted according to tokensIn array |
+| wethIsEth  | bool                               | If true, incoming ETH will be wrapped to WETH and outgoing WETH will be unwrapped to ETH     |
 | userData   | bytes calldata                     | Additional (optional) data required for the operation                                             |
 
 **Returns:**
@@ -166,6 +170,7 @@ Adds liquidity unbalanced to a nested pool. A nested pool is one in which one or
 function queryAddLiquidityUnbalancedToERC4626Pool(
     address pool,
     uint256[] memory exactUnderlyingAmountsIn,
+    address sender,
     bytes memory userData
 ) external returns (uint256 bptAmountOut);
 ```
@@ -177,6 +182,7 @@ Query an `addLiquidityUnbalancedToERC4626Pool` operation.
 |------------|------------------------------------|----------------------------------------------------------------------------------------------|
 | pool      | address     | Address of the liquidity pool                        |
 | exactUnderlyingAmountsIn   | uint256[] memory                            | Exact amounts of underlying tokens in, sorted in token registration order of wrapped tokens in the pool |
+| sender    | address      | The sender passed to the operation. It can influence results (e.g., with user-dependent hooks) |
 | userData   | bytes calldata                     | Additional (optional) data required for the operation                                             |
 
 **Returns:**
@@ -191,6 +197,7 @@ Query an `addLiquidityUnbalancedToERC4626Pool` operation.
 function queryAddLiquidityProportionalToERC4626Pool(
     address pool,
     uint256 exactBptAmountOut,
+    address sender,
     bytes memory userData
 ) external returns (uint256[] memory underlyingAmountsIn);
 ```
@@ -201,6 +208,7 @@ Query an `addLiquidityProportionalToERC4626Pool` operation.
 |------------|------------------------------------|----------------------------------------------------------------------------------------------|
 | pool      | address     | Address of the liquidity pool                        |
 | exactBptAmountOut   | uint256                            | Exact amount of pool tokens to be received |
+| sender    | address      | The sender passed to the operation. It can influence results (e.g., with user-dependent hooks) |
 | userData   | bytes calldata                     | Additional (optional) data required for the operation                             |
 
 **Returns:**
@@ -215,6 +223,7 @@ Query an `addLiquidityProportionalToERC4626Pool` operation.
 function queryRemoveLiquidityProportionalFromERC4626Pool(
     address pool,
     uint256 exactBptAmountIn,
+    address sender,
     bytes memory userData
 ) external returns (uint256[] memory underlyingAmountsOut);
 ```
@@ -225,6 +234,7 @@ Query a `removeLiquidityProportionalFromERC4626Pool` operation.
 |------------|------------------------------------|----------------------------------------------------------------------------------------------|
 | pool      | address     | Address of the liquidity pool                        |
 | exactBptAmountIn   | uint256                            | Exact amount of pool tokens provided |
+| sender    | address      | The sender passed to the operation. It can influence results (e.g., with user-dependent hooks) |
 | userData   | bytes calldata                     | Additional (optional) data required for the operation                                         |
 
 **Returns:**
@@ -241,6 +251,7 @@ function queryAddLiquidityUnbalancedNestedPool(
     address pool,
     address[] memory tokensIn,
     uint256[] memory exactAmountsIn,
+    address sender,
     bytes memory userData
 ) external returns (uint256 bptAmountOut);
 ```
@@ -253,6 +264,7 @@ Query an `addLiquidityUnbalancedNestedPool` operation.
 | pool      | address     | Address of the liquidity pool                        |
 | tokensIn      | address[] memory     | Input token addresses, sorted by user preference. `tokensIn` array must have all tokens from child pools and all tokens that are not BPTs from the nested pool (parent pool). |
 | exactAmountsIn   | uint256[] memory        | Amount of each underlying token in, sorted according to tokensIn array |
+| sender    | address      | The sender passed to the operation. It can influence results (e.g., with user-dependent hooks) |
 | userData   | bytes calldata                     | Additional (optional) data required for the operation                                             |
 
 **Returns:**
@@ -268,6 +280,7 @@ function queryRemoveLiquidityProportionalNestedPool(
     address parentPool,
     uint256 exactBptAmountIn,
     address[] memory tokensOut,
+    address sender,
     bytes memory userData
 ) external returns (uint256[] memory amountsOut);
 ```
@@ -280,6 +293,7 @@ Query a `removeLiquidityProportionalNestedPool` operation.
 | parentPool      | address     | Address of the highest level pool (which contains BPTs of other pools) |
 | exactBptAmountIn      | uint256     | Exact amount of `parentPool` tokens provided |
 | tokensOut   | address[] memory        | Output token addresses, sorted by user preference. `tokensOut` array must have all tokens from child pools and all tokens that are not BPTs from the nested pool (parent pool). If not all tokens are informed, balances are not settled and the operation reverts. Tokens that repeat must be informed only once. |
+| sender    | address      | The sender passed to the operation. It can influence results (e.g., with user-dependent hooks) |
 | userData   | bytes calldata                     | Additional (optional) data required for the operation                                             |
 
 **Returns:**

@@ -24,18 +24,24 @@ If your organization is a DAO and you're seeking to enhance liquidity for your E
 
 
 ## Adding liquidity to a buffer
-Liquidity can be added to a buffer for a specific token pair. This is done by invoking the `addLiquidityToBuffer` function, where you designate the ERC4626 Token as the buffer reference. Note that for security reasons, liquidity can only be added (or removed) proportionally. It's important to note that a buffer can still function with zero liquidity. It can be used to wrap and unwrap assets, meaning that even an empty buffer can facilitate swaps through the Vault.
+Liquidity can be added to a buffer for a specific token pair. This is done by invoking the `addLiquidityToBuffer` function in the [Buffer Router](https://github.com/balancer/balancer-v3-monorepo/blob/main/pkg/vault/contracts/BufferRouter.sol), where you designate the ERC4626 Token as the buffer reference. Note that for security reasons, liquidity can only be added (or removed) proportionally. It's important to note that a buffer can still function with zero liquidity. It can be used to wrap and unwrap assets, meaning that even an empty buffer can facilitate swaps through the Vault.
 ```solidity
 /**
- * @notice Adds liquidity to a yield-bearing buffer (one of the Vault's internal ERC4626 token buffers).
+ * @notice Adds liquidity proportionally to an internal ERC4626 buffer in the Vault.
+ * @dev Requires the buffer to be initialized beforehand. Restricting adds to proportional simplifies the Vault
+ * code, avoiding rounding issues and minimum amount checks. It is possible to add unbalanced by interacting
+ * with the wrapper contract directly.
  * @param wrappedToken Address of the wrapped token that implements IERC4626
- * @param exactSharesToIssue The value in underlying tokens that `sharesOwner` wants to add to the buffer,
- * in underlying token decimals
- * @return amountUnderlyingRaw Amount of underlying tokens deposited into the buffer
- * @return amountWrappedRaw Amount of wrapped tokens deposited into the buffer
-*/
+ * @param maxAmountUnderlyingIn Maximum amount of underlying tokens to add to the buffer. It is expressed in underlying token native decimals
+ * @param maxAmountWrappedIn Maximum amount of wrapped tokens to add to the buffer. It is expressed in wrapped token native decimals
+ * @param exactSharesToIssue The amount of shares that `sharesOwner` wants to add to the buffer, in underlying token decimals
+ * @return amountUnderlyingIn Amount of underlying tokens deposited into the buffer
+ * @return amountWrappedIn Amount of wrapped tokens deposited into the buffer
+ */
 function addLiquidityToBuffer(
     IERC4626 wrappedToken,
+    uint256 maxAmountUnderlyingIn,
+    uint256 maxAmountWrappedIn,
     uint256 exactSharesToIssue
 ) external returns (uint256 amountUnderlyingRaw, uint256 amountWrappedRaw);
 ```
@@ -60,14 +66,18 @@ In order to keep it permissionless, `removeLiquidityFromBuffer` was moved to the
  * - The buffer needs to have some liquidity and have its asset registered in `_bufferAssets` storage.
  *
  * @param wrappedToken Address of the wrapped token that implements IERC4626
- * @param sharesToRemove Amount of shares to remove from the buffer. Cannot be greater than sharesOwner's
- * total shares. It is expressed in underlying token native decimals.
+ * @param sharesToRemove Amount of shares to remove from the buffer. Cannot be greater than sharesOwner's total shares. It is expressed in underlying token native decimals
+ * @param minAmountUnderlyingOutRaw Minimum amount of underlying tokens to receive from the buffer. It is expressed in underlying token native decimals
+ * @param minAmountWrappedOutRaw Minimum amount of wrapped tokens to receive from the buffer. It is expressed in
+ * wrapped token native decimals
  * @return removedUnderlyingBalanceRaw Amount of underlying tokens returned to the user
  * @return removedWrappedBalanceRaw Amount of wrapped tokens returned to the user
-*/
+ */
 function removeLiquidityFromBuffer(
     IERC4626 wrappedToken,
-    uint256 sharesToRemove
+    uint256 sharesToRemove,
+    uint256 minAmountUnderlyingOutRaw,
+    uint256 minAmountWrappedOutRaw
 ) external returns (uint256 removedUnderlyingBalanceRaw, uint256 removedWrappedBalanceRaw);
 ``` 
 

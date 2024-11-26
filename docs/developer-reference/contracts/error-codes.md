@@ -17,6 +17,7 @@ Balancer uses custom errors which provide a convenient and gas-efficient way to 
 | Error   | Comment                                         |
 | ------- | ----------------------------------------------- |
 | Disabled| Cannot create a pool after the factory was disabled |
+| IndexOutOfBounds| A pool index is beyond the current bounds of the array |
 
 ## IERC20MultitokenErrors
 
@@ -75,7 +76,8 @@ Balancer uses custom errors which provide a convenient and gas-efficient way to 
 | SwapFeePercentageTooHigh()     | Error raised when the swap fee percentage exceeds the maximum allowed value |
 | FeePrecisionTooHigh()     | Primary fee percentages result in an aggregate fee that cannot be stored with the required precision |
 | PercentageAboveMax()     | A given percentage is above the maximum (usually FixedPoint.ONE,or 1e18 wei) |
-| QueriesDisabled()              | A user tried to execute a query operation when they were disabled |
+| QueriesDisabled()              | A user tried to execute a query operation when they were reversibly disabled |
+| QueriesDisabledPermanently()   | A user tried to execute a query operation when they were permanently disabled |
 | PoolInRecoveryMode(address)    | Cannot enable recovery mode when already enabled |
 | PoolNotInRecoveryMode(address) | Cannot disable recovery mode when not enabled |
 | SenderIsNotVault(address)      | Error indicating the sender is not the Vault (e.g.,someone is trying to call a permissioned function) |
@@ -99,6 +101,7 @@ Balancer uses custom errors which provide a convenient and gas-efficient way to 
 | BufferTotalSupplyTooLow(uint256) | The total supply of a buffer can't be lower than the absolute minimum |
 | NotEnoughUnderlying(IERC4626,uint256,uint256) | A wrap/unwrap operation consumed more or returned less underlying tokens than it should |
 | NotEnoughWrapped(IERC4626,uint256,uint256) | A wrap/unwrap operation consumed more or returned less wrapped tokens than it should |
+| IssuedSharesBelowMin(uint256,uint256) | Shares issued during initialization are below the requested amount |
 | DoesNotSupportUnbalancedLiquidity()         | Pool does not support adding / removing liquidity with an unbalanced input |
 | CannotReceiveEth()             | The contract should not receive ETH |
 | NotVaultDelegateCall()         | The Vault extension was called by an account directly; it can only be called by the Vault via delegatecall |

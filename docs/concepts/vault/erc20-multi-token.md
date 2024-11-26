@@ -39,9 +39,13 @@ function _approve(address token, address owner, address spender, uint256 amount)
     _allowances[token][owner][spender] = amount;
     
     emit Approval(token, owner, spender, amount);
-    // We also emit the "approve" event on the pool token to ensure full compliance with ERC20 standards.
 
-    BalancerPoolToken(token).emitApproval(owner, spender, amount);
+    // We also emit the "approve" event on the pool token to ensure full compliance with the ERC20 standard.
+    // If this function fails we keep going, as this is used in recovery mode.
+    // Well-behaved pools will just emit an event here, so they should never fail.
+    try BalancerPoolToken(pool).emitApproval(owner, spender, amount) {} catch {
+        // solhint-disable-previous-line no-empty-blocks
+    }
 }
 ```
 

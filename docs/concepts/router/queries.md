@@ -25,6 +25,13 @@ The detailed Router API description can be found in the [Batch Router API sectio
 - `querySwapExactIn`
 - `querySwapExactOut`
 
+## Buffer Router queries
+The detailed Buffer Router API description can be found in the [Buffer Router API section](/concepts/router/onchain-api/buffer-router-api.html).
+
+- `queryInitializeBuffer`
+- `queryAddLiquidityToBuffer`
+- `queryRemoveLiquidityToBuffer`
+
 ## Composite Liquidity Router queries
 
 The detailed Router API description can be found in the [Composite Liquidity Router API section](/concepts/router/onchain-api/composite-liquidity-router-api.html).

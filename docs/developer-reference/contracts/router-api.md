@@ -315,7 +315,8 @@ Removes liquidity from a pool with a custom request.
 ```solidity
 function removeLiquidityRecovery(
     address pool,
-    uint256 exactBptAmountIn
+    uint256 exactBptAmountIn,
+    uint256[] memory minAmountsOut
 ) external returns (uint256[] memory amountsOut);
 ```
 Removes liquidity proportionally, burning an exact pool token amount. Only available in Recovery Mode.
@@ -326,6 +327,7 @@ Removes liquidity proportionally, burning an exact pool token amount. Only avail
 |---|---|---|
 | pool  | address  | Address of the liquidity pool |
 | exactBptAmountIn  | uint256  | Exact amount of pool tokens provided |
+| minAmountsOut | uint256[] | Minimum amounts of tokens to be received, sorted in token registration order |
 
 **Returns:**
 
@@ -405,59 +407,6 @@ Executes a swap operation specifying an exact output token amount.
 |-------------|-----------|-----------------------------------------------------|
 | amountIn    | uint256   | Calculated amount of input tokens to be sent in exchange for the requested output tokens |
 
-
-## ERC4626 Buffers
-
-### `initializeBuffer`
-
-```solidity
-function initializeBuffer(
-    IERC4626 wrappedToken,
-    uint256 amountUnderlyingRaw,
-    uint256 amountWrappedRaw
-) external returns (uint256 issuedShares);
-```
-Adds liquidity for the first time to one of the Vault's internal ERC4626 buffers. Buffer operations will revert until the buffer is initialized.
-
-**Parameters:**
-
-| Name  | Type  | Description  |
-|---|---|---|
-| wrappedToken  | IERC4626  | Address of the wrapped token that implements IERC4626 |
-| amountUnderlyingRaw  | uint256  | Amount of underlying tokens that will be deposited into the buffer |
-| amountWrappedRaw  | uint256  | Amount of wrapped tokens that will be deposited into the buffer |
-
-**Returns:**
-
-| Name  | Type  | Description  |
-|---|---|---|
-| issuedShares  | uint256  | The amount of tokens sharesOwner has in the buffer, denominated in underlying tokens (This is the BPT of an internal ERC4626 token buffer) |
-
-
-### `addLiquidityToBuffer`
-
-```solidity
-function addLiquidityToBuffer(
-    IERC4626 wrappedToken,
-    uint256 exactSharesToIssue,
-) external returns (uint256 amountUnderlyingRaw, uint256 amountWrappedRaw);
-```
-Adds liquidity proportionally to a yield-bearing buffer (one of the Vault's internal ERC4626 token buffers). This limitation is necessary to avoid having multiple "wrap/unwrap" paths.
-
-**Parameters:**
-
-| Name  | Type  | Description  |
-|---|---|---|
-| wrappedToken  | IERC4626  | Address of the wrapped token that implements IERC4626 |
-| exactSharesToIssue  | uint256  | The value in underlying tokens that `sharesOwner` wants to add to the buffer, in underlying token decimals |
-
-**Returns:**
-
-| Name  | Type  | Description  |
-|---|---|---|
-| amountUnderlyingRaw  | uint256  | Amount of underlying tokens deposited into the buffer |
-| amountWrappedRaw  | uint256  | Amount of wrapped tokens deposited into the buffer |
-
 ## Queries
 
 ### `queryAddLiquidityProportional`
@@ -466,6 +415,7 @@ Adds liquidity proportionally to a yield-bearing buffer (one of the Vault's inte
 function queryAddLiquidityProportional(
     address pool,
     uint256 exactBptAmountOut,
+    address sender,
     bytes memory userData
 ) external returns (uint256[] memory amountsIn);
 ```
@@ -477,6 +427,7 @@ Queries an `addLiquidityProportional` operation without actually executing it.
 |-------------------|-------------|--------------------------------------------------------------------|
 | pool              | address     | Address of the liquidity pool                                      |
 | exactBptAmountOut | uint256     | Exact amount of pool tokens to be received                         |
+| sender | address | The sender passed to the operation. It can influence results (e.g., with user-dependent hooks) |
 | userData          | bytes       | Additional (optional) data required for the query                  |
 
 **Returns:**
@@ -491,6 +442,7 @@ Queries an `addLiquidityProportional` operation without actually executing it.
 function queryAddLiquidityUnbalanced(
     address pool,
     uint256[] memory exactAmountsIn,
+    address sender,
     bytes memory userData
 ) external returns (uint256 bptAmountOut);
 ```
@@ -502,6 +454,7 @@ Queries an `addLiquidityUnbalanced` operation without actually executing it.
 |-----------------|-------------|----------------------------------------------------------------|
 | pool            | address     | Address of the liquidity pool                                  |
 | exactAmountsIn  | uint256[]   | Exact amounts of tokens to be added, sorted in token registration order |
+| sender | address | The sender passed to the operation. It can influence results (e.g., with user-dependent hooks) |
 | userData        | bytes       | Additional (optional) data required for the query              |
 
 **Returns:**
@@ -517,6 +470,7 @@ function queryAddLiquiditySingleTokenExactOut(
     address pool,
     IERC20 tokenIn,
     uint256 exactBptAmountOut,
+    address sender,
     bytes memory userData
 ) external returns (uint256 amountIn);
 ```
@@ -529,6 +483,7 @@ Queries an `addLiquiditySingleTokenExactOut` operation without actually executin
 | pool              | address     | Address of the liquidity pool                           |
 | tokenIn           | IERC20      | Token used to add liquidity                             |
 | exactBptAmountOut | uint256     | Expected exact amount of pool tokens to receive         |
+| sender | address | The sender passed to the operation. It can influence results (e.g., with user-dependent hooks) |
 | userData          | bytes       | Additional (optional) data required for the query       |
 
 **Returns:**
@@ -544,6 +499,7 @@ function queryAddLiquidityCustom(
     address pool,
     uint256[] memory maxAmountsIn,
     uint256 minBptAmountOut,
+    address sender,
     bytes memory userData
 ) external returns (uint256[] memory amountsIn, uint256 bptAmountOut, bytes memory returnData);
 ```
@@ -556,6 +512,7 @@ Queries an `addLiquidityCustom` operation without actually executing it.
 | pool            | address     | Address of the liquidity pool                                      |
 | maxAmountsIn    | uint256[]   | Maximum amounts of tokens to be added, sorted in token registration order |
 | minBptAmountOut | uint256     | Expected minimum amount of pool tokens to receive                  |
+| sender | address | The sender passed to the operation. It can influence results (e.g., with user-dependent hooks) |
 | userData        | bytes       | Additional (optional) data required for the query                  |
 
 **Returns:**
@@ -572,6 +529,7 @@ Queries an `addLiquidityCustom` operation without actually executing it.
 function queryRemoveLiquidityProportional(
     address pool,
     uint256 exactBptAmountIn,
+    address sender,
     bytes memory userData
 ) external returns (uint256[] memory amountsOut);
 ```
@@ -583,6 +541,7 @@ Queries a `removeLiquidityProportional` operation without actually executing it.
 |-------------------|-------------|--------------------------------------------------------|
 | pool              | address     | Address of the liquidity pool                          |
 | exactBptAmountIn  | uint256     | Exact amount of pool tokens provided for the query     |
+| sender | address | The sender passed to the operation. It can influence results (e.g., with user-dependent hooks) |
 | userData          | bytes       | Additional (optional) data required for the query      |
 
 **Returns:**
@@ -598,6 +557,7 @@ function queryRemoveLiquiditySingleTokenExactIn(
     address pool,
     uint256 exactBptAmountIn,
     IERC20 tokenOut,
+    address sender,
     bytes memory userData
 ) external returns (uint256 amountOut);
 ```
@@ -610,6 +570,7 @@ Queries a `removeLiquiditySingleTokenExactIn` operation without actually executi
 | pool              | address     | Address of the liquidity pool                          |
 | exactBptAmountIn  | uint256     | Exact amount of pool tokens provided for the query     |
 | tokenOut          | IERC20      | Token used to remove liquidity                         |
+| sender | address | The sender passed to the operation. It can influence results (e.g., with user-dependent hooks) |
 | userData          | bytes       | Additional (optional) data required for the query      |
 
 **Returns:**
@@ -625,6 +586,7 @@ function queryRemoveLiquiditySingleTokenExactOut(
     address pool,
     IERC20 tokenOut,
     uint256 exactAmountOut,
+    address sender,
     bytes memory userData
 ) external returns (uint256 bptAmountIn);
 ```
@@ -637,6 +599,7 @@ Queries `a removeLiquiditySingleTokenExactOut` operation without actually execut
 | pool              | address     | Address of the liquidity pool                          |
 | tokenOut          | IERC20      | Token used to remove liquidity                         |
 | exactAmountOut    | uint256     | Exact amount of tokens to receive                      |
+| sender | address | The sender passed to the operation. It can influence results (e.g., with user-dependent hooks) |
 | userData          | bytes       | Additional (optional) data required for the query      |
 
 **Returns:**
@@ -652,6 +615,7 @@ function queryRemoveLiquidityCustom(
     address pool,
     uint256 maxBptAmountIn,
     uint256[] memory minAmountsOut,
+    address sender,
     bytes memory userData
 ) external returns (uint256 bptAmountIn, uint256[] memory amountsOut, bytes memory returnData);
 ```
@@ -664,6 +628,7 @@ Queries a `removeLiquidityCustom` operation without actually executing it.
 | pool              | address        | Address of the liquidity pool                          |
 | maxBptAmountIn    | maxBptAmountIn | Maximum amount of pool tokens provided                 |
 | minAmountsOut     | uint256[]      | Expected minimum amounts of tokens to receive, sorted in token registration order |
+| sender | address | The sender passed to the operation. It can influence results (e.g., with user-dependent hooks) |
 | userData          | bytes          | Additional (optional) data required for the query      |
 
 **Returns:**
@@ -705,6 +670,7 @@ function querySwapSingleTokenExactIn(
     IERC20 tokenIn,
     IERC20 tokenOut,
     uint256 exactAmountIn,
+    address sender,
     bytes calldata userData
 ) external returns (uint256 amountCalculated);
 ```
@@ -718,6 +684,7 @@ Queries an `swapSingleTokenExactIn` operation without actually executing it.
 | tokenIn           | IERC20      | Token to be swapped from                          |
 | tokenOut          | IERC20      | Token to be swapped to                            |
 | exactAmountIn     | uint256     | Exact amount of input tokens to send              |
+| sender | address | The sender passed to the operation. It can influence results (e.g., with user-dependent hooks) |
 | userData          | bytes       | Additional (optional) data required for the query |
 
 **Returns:**
@@ -734,6 +701,7 @@ function querySwapSingleTokenExactOut(
     IERC20 tokenIn,
     IERC20 tokenOut,
     uint256 exactAmountOut,
+    address sender,
     bytes calldata userData
 ) external returns (uint256 amountCalculated);
 ```
@@ -747,6 +715,7 @@ Queries an `swapSingleTokenExactOut` operation without actually executing it.
 | tokenIn           | IERC20      | Token to be swapped from                          |
 | tokenOut          | IERC20      | Token to be swapped to                            |
 | exactAmountIn     | uint256     | Exact amount of input tokens to receive           |
+| sender | address | The sender passed to the operation. It can influence results (e.g., with user-dependent hooks) |
 | userData          | bytes       | Additional (optional) data required for the query |
 
 **Returns:**
@@ -757,7 +726,7 @@ Queries an `swapSingleTokenExactOut` operation without actually executing it.
 
 ## Router common
 
-These functions are shared between the `Router`, `BatchRouter`, and `CompositeLiquidityRouter` (defined in `RouterCommon`).
+These functions are shared between the `Router`, `BatchRouter`, `BufferRouter`, and `CompositeLiquidityRouter` (defined in `RouterCommon`).
 
 ### `permitBatchAndCall`
 
