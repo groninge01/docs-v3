@@ -20,7 +20,7 @@ Whitelist your token by doing a Pull-Request [here](https://github.com/balancer/
 
 ## Rate Provider
 ::: tip
-Consult our [rate provider onboarding FAQ](./rate-providers.md) for more details
+Consult our [rate provider onboarding FAQ](../onboarding-overview/rate-providers.md) for more details
 :::
 Given you want to onboard a yield-bearing asset stable pair with a stable pool, it is required that you provide a vetted
 in rate provider upon pool creation.

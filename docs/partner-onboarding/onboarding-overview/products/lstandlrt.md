@@ -15,7 +15,7 @@ This is achieved by utilizing three core components:
 3. [Boosted pools](../products/boostedpools.md)
 
 #### Rate provider technology
-By utilizing [rate provider](../../balancer-v2/rate-providers.md) technology, Balancer guarantees optimal swaps for traders by quoting an on-chain rate of the yield-bearing asset. As a result a trader gets the most up-to-date quote and trading amount when routed through Balancer while LPs get more trading volume by optimizing and rebalancing the token composition in stableswap pools.
+By utilizing [rate provider](../rate-providers.md) technology, Balancer guarantees optimal swaps for traders by quoting an on-chain rate of the yield-bearing asset. As a result a trader gets the most up-to-date quote and trading amount when routed through Balancer while LPs get more trading volume by optimizing and rebalancing the token composition in stableswap pools.
 #### Revenue Share Model: Core Pool Dynamics
 To align token emissions with asset performance, Balancer governance introduced the [core pool framework](../../balancer-v2/core-pools.md). In short, if a pool consists of at least 50% yield-bearing assets it qualifies for receiving a share of the fees that the DAO collects on secondary layers such as voting markets which then increase token emissions to pools.
 #### Boosted Pools

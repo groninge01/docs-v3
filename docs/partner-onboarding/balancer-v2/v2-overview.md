@@ -27,7 +27,7 @@ Balancer v2 offers a wide variety of exciting pool types. The following table pr
 | Gyroscope E-CLPs           | Specialized pools with [customized liquidity curves](https://docs.gyro.finance/gyroscope-protocol/readme)                                  | [USDC:GYD Stable Pool](https://app.balancer.fi/#/ethereum/pool/0xc2aa60465bffa1a88f5ba471a59ca0435c3ec5c100020000000000000000062c) on mainnet |
 | Managed pools              | Specialized pools with dynamic pool weights. See [Kassandra Finance](https://app.kassandra.finance/) for an example implementation use-case | [Example index fund](https://app.kassandra.finance/pool/1370xc22bb237a5b8b7260190cb9e4998a9901a68af6f000100000000000000000d8d) on Avalanche   |
 
-- On Balancer v2, many projects choose to utilize our highly efficient Composable Stable Pool technology. This allows to deploy deep liquidity while guaranteeing correct trades through [rate provider](./rate-providers.md) technology. Furthermore, by harnessing our [vault architecture](../../concepts/vault/README.md) design, pools benefit from direct trading routes, aggregator integration and deep liquidity.
+- On Balancer v2, many projects choose to utilize our highly efficient Composable Stable Pool technology. This allows to deploy deep liquidity while guaranteeing correct trades through [rate provider](../onboarding-overview/rate-providers.md) technology. Furthermore, by harnessing our [vault architecture](../../concepts/vault/README.md) design, pools benefit from direct trading routes, aggregator integration and deep liquidity.
 - Our flexible weighted pool design allows for innovative pool design, letting you choose between any target weights and up to 8 token pools opening up the possibility to host governance token liquidity or build exciting index-fund like products.
 - Gyroscopes E-CLPs leverage custom trading curves for even higher utilization rates and efficiency
 - Managed pools are experimental products. Although certain solutions exist, their support is limited.
@@ -70,7 +70,7 @@ Balancer v2's tokenomics around veBAL encourage partaking in various voting ince
 
 ## Onboarding Guides
 - [Yield-bearing Token Onboarding](onboard-yb-token.md)
-- [Rate Provider Onboarding](rate-providers.md)
+- [Rate Provider Onboarding](../onboarding-overview/rate-providers.md)
 - [Gauge Onboarding](gauge-onboarding.md)
 - [Core Pool Framework](core-pools.md)
 
