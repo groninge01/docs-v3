@@ -712,6 +712,53 @@ calculateProportionalAmounts(
 
 Amounts proportional to the reference amount.
 
+---
+
+### Permit2 Helper
+
+Balancer v3 handles token approval through Pemit2 and this helper facilitates Permit2 signature generation.
+
+Each operation (e.g. addLiquidity, swap, ...) has its own method that leverages the same input type of the operation itself in order to simplify signature generation.
+
+**Example**
+
+See [addLiquidityWithPermit2Signature example](https://github.com/balancer/b-sdk/tree/main/examples/addLiquidity/addLiquidityWithPermit2Signature.ts).
+
+**Function**
+
+Helper function to create a Permit2 signature for an addLiquidity operation:
+
+```typescript
+static async signAddLiquidityApproval(
+    input: AddLiquidityBaseBuildCallInput & {
+        client: PublicWalletClient;
+        owner: Address;
+        nonces?: number[];
+        expirations?: number[];
+    },
+): Promise<Permit2>
+```
+
+**Parameters**
+
+| Name                   | Type                                                                                                                 | Description                              |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| input                  | [AddLiquidityBaseBuildCallInput](https://github.com/balancer/b-sdk/tree/main/src/entities/addLiquidity/types.ts#L62) | Add Liquidity Input                      |
+| client                 | [PublicWalletClient](https://github.com/balancer/b-sdk/tree/main/src/utils/types.ts#L3)                              | Viem's wallet client with public actions |
+| owner                  | Address                                                                                                              | User address                             |
+| nonces (optional)      | number[]                                                                                                             | Nonces for each token                    |
+| expirations (optional) | number[]                                                                                                             | Expirations for each token               |
+
+**Returns**
+
+```typescript
+Promise<Permit2>;
+```
+
+[Permit2](https://github.com/balancer/b-sdk/tree/main/src/entities/permit2Helper/index.ts#L35) - Permit2 object with metadata and encoded signature
+
+---
+
 
 <style scoped>
 table {
