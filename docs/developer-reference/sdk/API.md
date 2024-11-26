@@ -759,6 +759,50 @@ Promise<Permit2>;
 
 ---
 
+### Permit Helper
+
+Balancer v3 conforms with EIP-2612 and this helper facilitates Permit signature generation.
+
+Each operation (e.g. removeLiquidity, removeLiquidityNested and removeLiquidityBoosted) has its own method that leverages the same input type of the operation itself in order to simplify signature generation.
+
+**Example**
+
+See [removeLiquidityWithPermitSignature example](https://github.com/balancer/b-sdk/tree/main/examples/removeLiquidity/removeLiquidityWithPermitSignature.ts).
+
+**Function**
+
+Helper function to create a Permit signature for a removeLiquidity operation:
+
+```typescript
+static signRemoveLiquidityApproval = async (
+    input: RemoveLiquidityBaseBuildCallInput & {
+        client: PublicWalletClient;
+        owner: Hex;
+        nonce?: bigint;
+        deadline?: bigint;
+    },
+): Promise<Permit>
+```
+
+**Parameters**
+
+| Name                   | Type                                                                                                                       | Description                              |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| input                  | [RemoveLiquidityBaseBuildCallInput](https://github.com/balancer/b-sdk/tree/main/src/entities/removeLiquidity/types.ts#L81) | Remove Liquidity Input                   |
+| client                 | [PublicWalletClient](https://github.com/balancer/b-sdk/tree/main/src/utils/types.ts#L3)                                    | Viem's wallet client with public actions |
+| owner                  | Address                                                                                                                    | User address                             |
+| nonces (optional)      | number[]                                                                                                                   | Nonces for each token                    |
+| expirations (optional) | number[]                                                                                                                   | Expirations for each token               |
+
+**Returns**
+
+```typescript
+Promise<Permit>;
+```
+
+[Permit](https://github.com/balancer/b-sdk/tree/main/src/entities/permitHelper/index.ts#L30) - Permit object with metadata and encoded signature
+
+---
 
 <style scoped>
 table {
