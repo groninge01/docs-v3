@@ -19,7 +19,7 @@ function initializeBuffer(
     uint256 minIssuedShares
 ) external returns (uint256 issuedShares);
 ```
-Adds liquidity for the first time to one of the Vault's internal ERC4626 buffers. Buffer operations will revert until the buffer is initialized.
+Adds liquidity for the first time to one of the Vault's internal ERC4626 buffers. Buffer operations will revert until the buffer is initialized. To avoid unexpected behavior, always initialize buffers before creating or initializing any pools that contain the wrapped tokens to be used with them.
 
 **Parameters:**
 
