@@ -31,7 +31,7 @@ Further documentation is available on the self documented [api server](https://a
 * [Pools - Get swap events for a pool](./pool-swap-events.md)
 * [Swap - Query the Smart Order Router (SOR)](./swap-query-sor.md)
 * [User - Get pool balances for a user](./user-pool-balance.md)
-* [User - Get v2 pool join & exits events for a user](./user-pool-join-exits.md)
+* [User - Get v2 pool add & remove events for a user](./user-pool-add-remove.md)
 
 
 
