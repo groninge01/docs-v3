@@ -199,7 +199,7 @@ function removeLiquidityProportional(
     bytes memory userData
 ) external payable returns (uint256[] memory amountsOut);
 ```
-Removes liquidity with proportional token amounts from a pool, burning an exact pool token amount.
+Removes liquidity with proportional token amounts from a pool, burning an exact pool token amount. If the user both adds and removes liquidity to a pool in the same transaction, the system will charge the static fee percentage on all tokens as an "exit fee." This is not really a valid use case, and may be an attack. Use caution when removing liquidity through a Safe or other multisig / non-EOA address. Use "sign and execute," ideally through a private node (or at least not allowing public execution) to avoid front-running, and always set strict limits (i.e., `minAmountsOut`) so that it will revert if any unexpected fees are charged. (It is also possible to check whether the flag has been set before withdrawing, by calling `getAddLiquidityCalledFlag` on the Vault.)
 
 **Parameters:**
 
@@ -318,7 +318,7 @@ function removeLiquidityRecovery(
     uint256 exactBptAmountIn
 ) external returns (uint256[] memory amountsOut);
 ```
-Removes liquidity proportionally, burning an exact pool token amount. Only available in Recovery Mode.
+Removes liquidity proportionally, burning an exact pool token amount. Only available in Recovery Mode. If the user both adds and removes liquidity to a pool in the same transaction, the system will charge the static fee percentage on all tokens as an "exit fee." This is not really a valid use case (and would be especially unusual in Recovery Mode), and may be an attack. Use caution when removing liquidity through a Safe or other multisig / non-EOA address. Use "sign and execute," ideally through a private node (or at least not allowing public execution) to avoid front-running, and always set strict limits (i.e., `minAmountsOut`) so that it will revert if any unexpected fees are charged. (It is also possible to check whether the flag has been set before withdrawing, by calling `getAddLiquidityCalledFlag` on the Vault.)
 
 **Parameters:**
 
