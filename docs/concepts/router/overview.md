@@ -31,6 +31,11 @@ Balancer has developed, audited and deployed Router contracts with the goal of p
 - [API](../../developer-reference/contracts/batch-router-api.md)
 - [Code](https://github.com/balancer/balancer-v3-monorepo/blob/main/pkg/vault/contracts/BatchRouter.sol)
 
+### Buffer Router
+- Liquidity operations on buffers
+- [API](../../developer-reference/contracts/buffer-router-api.md)
+- [Code](https://github.com/balancer/balancer-v3-monorepo/blob/main/pkg/vault/contracts/BufferRouter.sol)
+
 ### Composite Liquidity Router
 - Liquidity operations on pools containing ERC4626 tokens, and nested pools (i.e. pools containing the BPT of other pools)
 - [API](../../developer-reference/contracts/composite-liquidity-router-api.md)

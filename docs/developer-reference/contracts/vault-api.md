@@ -144,6 +144,25 @@ This `VaultExtension` function retrieves the reserve (i.e., total Vault balance)
 |---|---|---|
 |  | uint256  | The amount of reserves for the given token  |
 
+### `getAddLiquidityCalledFlag`
+
+```solidity
+function getAddLiquidityCalledFlag(address pool) external view returns (bool);
+```
+This `VaultExtension` function retrieves the value of the falg used to detect and tax "round trip" transactions (adding and removing liquidity in the same pool).
+
+**Parameters:**
+
+| Name  | Type  | Description  |
+|---|---|---|
+| pool  | address  | The pool on which to check the flag  |
+
+**Returns:**
+
+| Name  | Type  | Description  |
+|---|---|---|
+|  | bool  | True if addLiquidity has been called on this pool in the current transaction  |
+
 ## Swaps
 ### `swap`
 
@@ -481,6 +500,7 @@ function initializeBuffer(
     IERC4626 wrappedToken,
     uint256 amountUnderlyingRaw,
     uint256 amountWrappedRaw,
+    uint256 minIssuedShares,
     address sharesOwner
 ) external returns (uint256 issuedShares);
 ```
@@ -493,6 +513,7 @@ This `VaultAdmin` function adds liquidity to an internal ERC4626 buffer in the V
 | wrappedToken  | IERC4626  | Address of the wrapped token that implements IERC4626  |
 | amountUnderlyingRaw  | uint256  | Amount of underlying tokens that will be deposited into the buffer  |
 | amountWrappedRaw  | uint256  | Amount of wrapped tokens that will be deposited into the buffer  |
+| minIssuedShares | uint256 | Minimum amount of shares to receive from the buffer, expressed in underlying token native decimals |
 | sharesOwner  | address  | Address of the contract that will own the liquidity. Only this contract will be able to remove liquidity from the buffer |
 
 ### `addLiquidityToBuffer`
@@ -500,6 +521,8 @@ This `VaultAdmin` function adds liquidity to an internal ERC4626 buffer in the V
 ```solidity
 function addLiquidityToBuffer(
     IERC4626 wrappedToken,
+    uint256 maxAmountUnderlyingInRaw,
+    uint256 maxAmountWrappedInRaw,
     uint256 exactSharesToIssue,
     address sharesOwner
 ) external returns (uint256 amountUnderlyingRaw, uint256 amountWrappedRaw);
@@ -511,8 +534,9 @@ This `VaultAdmin` function adds liquidity proportionally to an internal ERC4626 
 | Name  | Type  | Description  |
 |---|---|---|
 | wrappedToken  | IERC4626  | Address of the wrapped token that implements IERC4626  |
-| amountUnderlyingRaw  | uint256  | Amount of underlying tokens that will be deposited into the buffer  |
-| amountWrappedRaw  | uint256  | Amount of wrapped tokens that will be deposited into the buffer  |
+| maxAmountUnderlyingInRaw  | uint256  | Amount of underlying tokens that will be deposited into the buffer  |
+| maxAmountWrappedInRaw  | uint256  | Amount of wrapped tokens that will be deposited into the buffer  |
+| exactSharesToIssue | uint256 | The value in underlying tokens that `sharesOwner` wants to add to the buffer in underlying token decimals |
 | sharesOwner  | address  | Address of the contract that will own the liquidity. Only this contract will be able to remove liquidity from the buffer |
 
 ### `removeLiquidityFromBuffer`
@@ -520,7 +544,9 @@ This `VaultAdmin` function adds liquidity proportionally to an internal ERC4626 
 ```solidity
 function removeLiquidityFromBuffer(
     IERC4626 wrappedToken,
-    uint256 sharesToRemove
+    uint256 sharesToRemove,
+    uint256 minAmountUnderlyingOutRaw,
+    uint256 minAmountWrappedOutRaw
 ) external returns (uint256 removedUnderlyingBalanceRaw, uint256 removedWrappedBalanceRaw);
 ```
 This `VaultAdmin` function removes liquidity from an internal ERC4626 buffer in the Vault. Only proportional exits are supported. Note that the `sharesOwner` here is the msg.sender; unlike initialize, add, and other buffer operations, the entrypoint for this function is the Vault itself.
@@ -531,12 +557,14 @@ This `VaultAdmin` function removes liquidity from an internal ERC4626 buffer in 
 |---|---|---|
 | wrappedToken  | IERC4626  | Address of the wrapped token that implements IERC4626  |
 | sharesToRemove  | uint256  | Amount of shares to remove from the buffer. Cannot be greater than sharesOwner total shares  |
+| minAmountUnderlyingOutRaw | uint256 | Minimum amount of underlying tokens to receive from the buffer. It is expressed in underlying token native decimals |
+| minAmountWrappedOutRaw | uint256 | Minimum amount of wrapped tokens to receive from the buffer. It is expressed in wrapped token native decimals |
 
 ### `getBufferOwnerShares`
 
 ```solidity
 function getBufferOwnerShares(
-    IERC20 wrappedToken,
+    IERC4626 wrappedToken,
     address liquidityOwner
 ) external view returns (uint256 ownerShares);
 ```
@@ -549,10 +577,37 @@ This `VaultAdmin` function returns the shares (internal buffer BPT) of a liquidi
 | wrappedToken  | IERC20  | Address of the wrapped token that implements IERC4626  |
 | liquidityOwner  | address  | Address of the user that owns liquidity in the wrapped token's buffer  |
 
+**Returns:**
+
+| Name  | Type  | Description  |
+|---|---|---|
+| ownerShares  | uint256  | Amount of shares allocated to the liquidity owner, in native underlying token decimals |
+
+### `getBufferAsset`
+
+```solidity
+function getBufferAsset(
+    IERC4626 wrappedToken
+) external view returns (address underlyingToken);
+```
+This `VaultAdmin` function returns the shares (internal buffer BPT) of a liquidity owner: a user that deposited assets in the buffer.
+
+**Parameters:**
+
+| Name  | Type  | Description  |
+|---|---|---|
+| wrappedToken  | IERC4626  | Address of the wrapped token that implements IERC4626  |
+
+**Returns:**
+
+| Name  | Type  | Description  |
+|---|---|---|
+| underlyingToken  | address  | Address of the underlying token for the buffer |
+
 ### `getBufferTotalShares`
 
 ```solidity
-function getBufferTotalShares(IERC20 wrappedToken) external view returns (uint256 bufferShares);
+function getBufferTotalShares(IERC4626 wrappedToken) external view returns (uint256 bufferShares);
 ```
 This `VaultAdmin` function returns the supply shares (internal buffer BPT) of the ERC4626 buffer.
 
@@ -560,13 +615,13 @@ This `VaultAdmin` function returns the supply shares (internal buffer BPT) of th
 
 | Name  | Type  | Description  |
 |---|---|---|
-| wrappedToken  | IERC20  | Address of the wrapped token that implements IERC4626  |
+| wrappedToken  | IERC4626  | Address of the wrapped token that implements IERC4626  |
 
 ### `getBufferBalance`
 
 ```solidity
 function getBufferBalance(
-    IERC20 wrappedToken
+    IERC4626 wrappedToken
 ) external view returns (uint256 underlyingBalanceRaw, uint256 wrappedBalanceRaw);
 ```
 This `VaultAdmin` function returns the amount of underlying and wrapped tokens deposited in the internal buffer of the vault.
@@ -575,7 +630,14 @@ This `VaultAdmin` function returns the amount of underlying and wrapped tokens d
 
 | Name  | Type  | Description  |
 |---|---|---|
-| wrappedToken  | IERC20  | Address of the wrapped token that implements IERC4626  |
+| wrappedToken  | IERC4626  | Address of the wrapped token that implements IERC4626  |
+
+**Returns:**
+
+| Name  | Type  | Description  |
+|---|---|---|
+| underlyingBalanceRaw  | uint256  | Amount of underlying tokens deposited into the buffer, in native token decimals |
+| wrappedBalanceRaw  | uint256  | Amount of wrapped tokens deposited into the buffer, in native token decimals |
 
 ## Authentication
 ### `getAuthorizer`
@@ -771,7 +833,7 @@ This `VaultExtension` function approves a spender to spend pool tokens on behalf
 ```solidity
 function transfer(address owner, address to, uint256 amount) external returns (bool);
 ```
-This `VaultExtension` function transfers pool token from owner to a recipient.
+This `Vault` function transfers pool token from owner to a recipient.
 
 **Parameters:**
 
@@ -792,7 +854,7 @@ This `VaultExtension` function transfers pool token from owner to a recipient.
 ```solidity
 function transferFrom(address spender, address from, address to, uint256 amount) external returns (bool);
 ```
-This `VaultExtension` function transfers pool token from a sender to a recipient using an allowance.
+This `Vault` function transfers pool token from a sender to a recipient using an allowance.
 
 **Parameters:**
 
@@ -1082,7 +1144,8 @@ This `VaultExtension` function checks whether a pool is in recovery mode.
 function removeLiquidityRecovery(
     address pool,
     address from,
-    uint256 exactBptAmountIn
+    uint256 exactBptAmountIn,
+    uint256[] memory minAmountsOut
 ) external returns (uint256[] memory amountsOut);
 ```
 This `VaultExtension` function removes liquidity from a pool specifying exact pool tokens in, with proportional token amounts out. The request is implemented by the Vault without any interaction with the pool, ensuring that it works the same for all pools, and cannot be disabled by a new pool type.
@@ -1094,6 +1157,7 @@ This `VaultExtension` function removes liquidity from a pool specifying exact po
 | pool  | address  | Address of the pool  |
 | from  | address  | Address of user to burn pool tokens from  |
 | exactBptAmountIn  | uint256  | Input pool token amount  |
+| minAmountsOut | uint256[] | Minimum amounts of tokens to be received, sorted in token registration order |
 
 **Returns:**
 
@@ -1165,7 +1229,33 @@ This `VaultExtension` function performs a callback on `msg.sender` with argument
 ```solidity
 function isQueryDisabled() external view returns (bool);
 ```
-This `VaultExtension` function checks if the queries are enabled on the Vault.
+This `VaultExtension` function checks if the queries reversibly disabled on the Vault.
+
+**Returns:**
+
+| Name  | Type  | Description  |
+|---|---|---|
+|  | bool  | If true, then queries are disabled  |
+
+### `isQueryDisabledPermanently`
+
+```solidity
+function isQueryDisabledPermanently() external view returns (bool);
+```
+This `VaultExtension` function checks if the queries are permanently disabled on the Vault.
+
+**Returns:**
+
+| Name  | Type  | Description  |
+|---|---|---|
+|  | bool  | If true, then queries are disabled  |
+
+### `emitAuxiliaryEvent`
+
+```solidity
+function emitAuxiliaryEvent(string calldata eventKey, bytes calldata eventData) external;
+```
+This `VaultExtension` function checks if the queries are permanently disabled on the Vault.
 
 **Returns:**
 
@@ -1178,7 +1268,21 @@ This `VaultExtension` function checks if the queries are enabled on the Vault.
 ```solidity
 function disableQuery() external;
 ```
-This `VaultAdmin` function disables queries functionality on the Vault. It can only be called by governance.
+This `VaultAdmin` function reversibly disables query functionality on the Vault. It can only be called by governance.
+
+### `disableQueryPermanently`
+
+```solidity
+function disableQueryPermanently() external;
+```
+This `VaultAdmin` function permanently disables query functionality on the Vault. It can only be called by governance.
+
+### `enableQuery`
+
+```solidity
+function enableQuery() external;
+```
+This `VaultAdmin` function re-enables reversibly disabled query functionality on the Vault. It can only be called by governance.
 
 ## Constants
 ### `getPauseWindowEndTime`

@@ -246,6 +246,21 @@ This function withdraws collected protocol fees for a given pool. It sends swap 
 | pool  | address  | The pool on which fees were collected  |
 | recipient  | address  | Address to send the tokens  |
 
+### `withdrawProtocolFeesForToken`
+
+```solidity
+function withdrawProtocolFeesForToken(address pool, address recipient, IERC20 token) external;
+```
+This function withdraws collected protocol fees for a given pool and token. It sends swap and yield protocol fees to the recipient. This is a permissioned call, intended to cover the rare case when one of the tokens cannot be withdrawn (e.g., it is bricked or blocked).
+
+**Parameters:**
+
+| Name  | Type  | Description  |
+|---|---|---|
+| pool  | address  | The pool on which fees were collected  |
+| recipient  | address  | Address to send the tokens  |
+| token | IERC20 | The token to withdraw
+
 ### `withdrawPoolCreatorFees`
 
 ```solidity
